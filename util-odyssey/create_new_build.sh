@@ -3,11 +3,10 @@
  # Author: arhines@fas.harvard.edu
  # Title: create_new_build.sh
  # Description: creates a CESM case, configures it, and builds it.
- #              Finally, a brief test spin-up is submitted and run.
  # ------------------------------------------------------------------
  VERSION=1.0.0
  DATE="Mon 11:57:12 EST 2014"
- USAGE="Usage: create_new_build.sh CASE"
+ USAGE="Usage: $0 CASE"
  OPTIONS="res [default:f19_f19], compset [default:F_2000], ncores [default:128] in that order"
  # --- Options processing -------------------------------------------
  if [ $# == 0 ] ; then
@@ -26,18 +25,21 @@
  echo COMPSET:$COMPSET
  #module
  #module restore runmodel
- grep 'impi/5.1.2.150-fasrc01/netcdf/4.1.3-fasrc09' <<< "$LD_LIBRARY_PATH" >/dev/null
- if [ $? -ne 0 ]; then
-   echo
-   echo module mismatch!
-   echo Loading modules ... takes half a minute ...
-   echo load modules beforehand next time ^_^
-   echo edit create_new_build.sh if this behaviour unwanted
-   source new-modules.sh
-   module purge
-   module load intel/15.0.0-fasrc01 impi/5.1.2.150-fasrc01 netcdf/4.1.3-fasrc09
-   module load perl-modules/5.22.0-fasrc03
- fi
+# grep 'impi/5.1.2.150-fasrc01/netcdf/4.1.3-fasrc09' <<< "$LD_LIBRARY_PATH" >/dev/null
+ grep 'impi/2017.2.174-fasrc01/netcdf/4.1.3-fasrc02' <<< "$LD_LIBRARY_PATH" >/dev/null
+# if [ $? -ne 0 ]; then
+#   echo
+#   echo module mismatch!
+#   echo Loading modules ... takes half a minute ...
+#   echo load modules beforehand next time ^_^
+#   echo edit $0 if this behaviour unwanted
+##   source new-modules.sh
+#   module purge
+##   module load intel/15.0.0-fasrc01 impi/5.1.2.150-fasrc01 netcdf/4.1.3-fasrc09
+##   module load perl-modules/5.22.0-fasrc03
+#   module load intel/17.0.4-fasrc01 impi/2017.2.174-fasrc01 netcdf/4.1.3-fasrc02
+#   module load perl-modules/5.10.1-fasrc13
+# fi
  export COMPILER="intel"
  #libs and includes
  #export INC_NETCDF="/n/sw/centos6/netcdf-4.3.0_intel-13.0.079/include"
@@ -58,7 +60,9 @@
 
  ./create_newcase -case ${CASEROOT} -mach ${MACHINE} -res ${RES} -compset ${COMPSET} || exit -1
 
- cp -a $SCRIPTDIR/user_nl_* $CASEROOT
+ cp -a $0 $CASEROOT/
+# cp -a $SCRIPTDIR/Tools/mkbatch.${MACHINE} $CASEROOT/Tools/
+ cp -a $SCRIPTDIR/user_nl_* $CASEROOT/
  # Copy source modifications
  cp -a $SCRIPTDIR/SourceMods/* $CASEROOT/SourceMods/
 
@@ -70,27 +74,27 @@
  ./xmlchange NTASKS_ATM=${NCORES},NTASKS_LND=${NCORES},NTASKS_ICE=${NCORES},NTASKS_OCN=${NCORES},NTASKS_CPL=${NCORES},NTASKS_GLC=${NCORES},NTASKS_ROF=${NCORES}
 
  # Partition
- sed -i 's/\(#SBATCH -p \).*$/\1huce_amd/' Tools/mkbatch.odyssey  #TODO
+ sed -i 's/\(#SBATCH -p \).*$/\1huce_amd/' Tools/mkbatch.${MACHINE}  #TODO
  ./xmlchange MAX_TASKS_PER_NODE=64  #TODO
-# sed -i 's/\(#SBATCH -p \).*$/\1huce_intel/' Tools/mkbatch.odyssey
+# sed -i 's/\(#SBATCH -p \).*$/\1huce_intel/' Tools/mkbatch.${MACHINE}
 # ./xmlchange MAX_TASKS_PER_NODE=32
-# sed -i 's/\(#SBATCH --mem-per-cpu=\).*$/\11000/' Tools/mkbatch.odyssey
+# sed -i 's/\(#SBATCH --mem-per-cpu=\).*$/\11000/' Tools/mkbatch.${MACHINE}
 
  # Email when job ends
-# sed -i 's/#\(#SBATCH --mail-type\)/\1/' Tools/mkbatch.odyssey  #TODO turn on
-# sed -i 's/^\(#SBATCH --mail-type\)/#\1/' Tools/mkbatch.odyssey  #TODO turn off
+# sed -i 's/#\(#SBATCH --mail-type\)/\1/' Tools/mkbatch.${MACHINE}  #TODO turn on
+# sed -i 's/^\(#SBATCH --mail-type\)/#\1/' Tools/mkbatch.${MACHINE}  #TODO turn off
 
  ./cesm_setup -clean
  # storage
+# ./xmlchange DIN_LOC_ROOT="/n/kuanglfs/pchan/CAM_input"  #don't change
  ./xmlchange -file env_build.xml -id EXEROOT -val $OUTPUT/bld
  ./xmlchange -file env_run.xml -id RUNDIR -val $RUNDIR
  ./xmlchange -file env_run.xml -id DOUT_S -val TRUE  #TODO
  ./xmlchange -file env_run.xml -id DOUT_S_ROOT -val $OUTPUT
 
  # Set up for a 1-month run:
- #./xmlchange -file env_build.xml -id GMAKE_J -val 1
  ./xmlchange -file env_run.xml -id STOP_OPTION -val ndays
- ./xmlchange -file env_run.xml -id STOP_N -val 30  #TODO
+ ./xmlchange -file env_run.xml -id STOP_N -val 1  #TODO
 #TODO ./xmlchange -file env_run.xml -id GET_REFCASE -val FALSE  #or it will check input data from svn...
 # ./xmlchange -file env_run.xml -id RESUBMIT -val 1  #times of submit = RESUBMIT+1
 
@@ -145,12 +149,14 @@
  #configure utilities of CAM (work for CAM only) Not Suggested! will change original set
  #/n/home05/mjfu/cesm1_2_0/models/atm/cam/bld/configure -chem waccm_ghg -nlev 66 -waccm_phys -test
 
+ ./xmlchange -file env_build.xml -id GMAKE_J -val 4
  #configure
  ./cesm_setup
-# chmod +x ./Buildconf/*.csh
+ ln -sT $OUTPUT scratch
 
  #build
- ./${CASE}.build
+# ./${CASE}.build
+ srun -p huce_intel,test -c 4 -t 100 --mem=4000 ./${CASE}.build  # 11 min for -j4. Slower with shared
  echo
 
  #branch: copy restart file
@@ -169,6 +175,7 @@
 # sed -i "s/ptile=15/ptile=16/g" ${CASE}.run
 # sed -i "s/8:00/12:00/g" ${CASE}.run
 
+ echo -n `date +%FT%T` TEST-ONLY-; sbatch --test-only ${CASE}.run
  printf "To submit job, issue:\n"
  printf "cd ${CASEROOT}\n"
  printf "./${CASE}.submit\n"
