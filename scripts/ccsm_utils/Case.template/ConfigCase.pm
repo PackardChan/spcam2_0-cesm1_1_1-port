@@ -437,7 +437,7 @@ EOD
 	if ($group =~ /component/) {
 	    foreach my $comp ( @comps ) {
 		$comp =~ s/\'//g; # get rid of quotes in $comp
-		foreach my $model qw(COMP_ATM COMP_LND COMP_ICE COMP_OCN COMP_GLC COMP_ROF) {
+		foreach my $model (qw(COMP_ATM COMP_LND COMP_ICE COMP_OCN COMP_GLC COMP_ROF)) {
 		    if ($self->get($model) eq $comp) {
 			my $groupname = $group . "_$comp";
 			if (($format eq "xml") || ($filename =~ m/xml/)) {
@@ -1168,7 +1168,7 @@ sub set_machine
         # allow for environment variables in the config_machines.xml file 
         # using $ENV{variablename} syntax
 	my $text = $setting->get_text();
-	if($text =~/^(.*)\$ENV{(.*)}(.*)$/){
+	if($text =~/^(.*)\$ENV\{(.*)\}(.*)$/){
 	    $text = $1.$ENV{$2}.$3;
 	}
 	$self->set($sname,$text);

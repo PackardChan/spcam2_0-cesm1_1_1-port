@@ -232,7 +232,7 @@ if (! $clean ) {
 	print "Creating user_nl_xxx files for components and cpl$eol";
     }
     my $buildconf  = "$caseroot/Buildconf";
-    foreach my $model qw(COMP_ATM COMP_LND COMP_ICE COMP_OCN COMP_GLC COMP_ROF) {
+    foreach my $model (qw(COMP_ATM COMP_LND COMP_ICE COMP_OCN COMP_GLC COMP_ROF)) {
 	my $comp  = $xmlvars{"$model"};
 	if (-f "$buildconf/$comp.user_nl.csh") {
 	    my $sysmod = "env CASEROOT=$caseroot CODEROOT=$xmlvars{CCSMROOT}/models";
