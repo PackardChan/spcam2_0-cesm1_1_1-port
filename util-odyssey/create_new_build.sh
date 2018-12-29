@@ -91,7 +91,7 @@
  #./xmlchange -file env_build.xml -id GMAKE_J -val 1
  ./xmlchange -file env_run.xml -id STOP_OPTION -val ndays
  ./xmlchange -file env_run.xml -id STOP_N -val 30  #TODO
- ./xmlchange -file env_run.xml -id GET_REFCASE -val FALSE  #or it will check input data from svn...
+#TODO ./xmlchange -file env_run.xml -id GET_REFCASE -val FALSE  #or it will check input data from svn...
 # ./xmlchange -file env_run.xml -id RESUBMIT -val 1  #times of submit = RESUBMIT+1
 
  # continue run not a new one?
