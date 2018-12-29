@@ -755,12 +755,7 @@ contains
 
 ! Compute local limits
 
-      beglev = 1
-      endlev = zdist(1)
-      do procid = 1, myid_z
-         beglev = endlev + 1
-         endlev = beglev + zdist(procid+1) - 1
-      enddo
+      call locallimits(myid_z, zdist, beglev, endlev)
       endlevp1 = endlev + 1
       endlevp = endlev
       if (myid_z == npr_z-1) endlevp = endlev + 1
@@ -823,12 +818,7 @@ contains
 
 ! Compute local limits
 
-      beglonxy = 1
-      endlonxy = xdistxy(1)
-      do procid = 1, myidxy_x
-         beglonxy = endlonxy + 1
-         endlonxy = beglonxy + xdistxy(procid+1) - 1
-      enddo
+      call locallimits(myidxy_x, xdistxy,beglonxy,endlonxy)
 
 ! Compute global table
 
@@ -886,12 +876,7 @@ contains
 
 ! Compute local limits
 
-      beglatxy = 1
-      endlatxy = ydistxy(1)
-      do procid = 1, myidxy_y
-         beglatxy = endlatxy + 1
-         endlatxy = beglatxy + ydistxy(procid+1) - 1
-      enddo
+      call locallimits(myidxy_y, ydistxy, beglatxy,endlatxy)
 
       if (iam .ge. npes_xy) then
 ! Auxiliary processes only
@@ -1060,6 +1045,22 @@ contains
 
     end subroutine compute_gsfactors
 
+    subroutine locallimits(myidxy, distxy, begdimxy, enddimxy)
+      integer, intent(in) :: myidxy
+      integer, intent(in) :: distxy(:)
+      integer, intent(out) :: begdimxy
+      integer, intent(out) :: enddimxy
+      
+      integer :: procid
+      
+      begdimxy = 1
+      enddimxy = distxy(1)
+      
+      do procid = 1, myidxy
+         begdimxy = enddimxy + 1
+         enddimxy = begdimxy + distxy(procid+1) - 1
+      enddo
+    end subroutine locallimits
 #endif
 
 end module spmd_dyn
