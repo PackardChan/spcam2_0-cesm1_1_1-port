@@ -244,6 +244,24 @@ if $MPILIB is set to mpi-serial then
   <MPI_PATH></MPI_PATH>
 </compiler>
 
+<compiler MACH="userdefined">
+  <NETCDF_PATH> USERDEFINED_MUST_EDIT_THIS</NETCDF_PATH>
+  <PNETCDF_PATH></PNETCDF_PATH>
+  <ADD_SLIBS># USERDEFINED $(shell $(NETCDF_PATH)/bin/nc-config --flibs)</ADD_SLIBS>  
+  <ADD_CPPDEFS></ADD_CPPDEFS>
+  <CONFIG_ARGS></CONFIG_ARGS>
+  <ESMF_LIBDIR></ESMF_LIBDIR>
+  <MPI_LIB_NAME></MPI_LIB_NAME>
+  <MPI_PATH></MPI_PATH>
+</compiler>
+
+<compiler MACH="yellowstone" COMPILER="intel">
+  <MPICC>mpiicc</MPICC>
+  <MPIFC>mpiifort</MPIFC>
+  <ADD_FFLAGS>  -xHost </ADD_FFLAGS>
+  <ADD_CFLAGS>  -xHost </ADD_CFLAGS>
+</compiler>
+
 <compiler OS="CNL">
   <SFC> ftn </SFC>
   <SCC> cc </SCC>
