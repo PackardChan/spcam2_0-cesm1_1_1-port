@@ -352,7 +352,7 @@ endif
 
 # System libraries (netcdf, mpi, pnetcdf, esmf) 
 ifndef SLIBS
-   SLIBS := -L$(LIB_NETCDF) -lnetcdf 
+   SLIBS := -L$(LIB_NETCDF) -lnetcdf -lnetcdff 
 endif
 ifdef LIB_PNETCDF
    SLIBS += -L$(LIB_PNETCDF) -lpnetcdf
@@ -487,7 +487,7 @@ db_flags:
 test_fc: test_fc.o
 	$(LD) -o $@ test_fc.o $(LDFLAGS)
 test_nc: test_nc.o
-	$(LD) -o $@ test_nc.o -L$(LIB_NETCDF) -lnetcdf $(LDFLAGS)
+	$(LD) -o $@ test_nc.o -L$(LIB_NETCDF) -lnetcdf -lnetcdff $(LDFLAGS)
 test_mpi: test_mpi.o
 	$(LD) -o $@ test_mpi.o $(LDFLAGS)
 test_esmf: test_esmf.o

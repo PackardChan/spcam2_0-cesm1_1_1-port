@@ -50,25 +50,25 @@
         <MAX_TASKS_PER_NODE>USERDEFINED_required_build</MAX_TASKS_PER_NODE>
 </machine>
 
-<machine MACH="userdefined">
-        <DESC>User Defined Machine</DESC>                                 <!-- can be anything -->
-        <OS>USERDEFINED_required_macros</OS>                              <!-- LINUX,Darwin,CNL,AIX,BGL,BGP -->
+<machine MACH="odyssey">
+        <DESC>Harvard Odyssey impi</DESC>                                 <!-- can be anything -->
+        <OS>LINUX</OS>                                                    <!-- LINUX,Darwin,CNL,AIX,BGL,BGP -->
         <COMPILERS>intel,ibm,pgi,pathscale,gnu,cray,lahey</COMPILERS>     <!-- intel,ibm,pgi,pathscale,gnu,cray,lahey -->
         <MPILIBS>openmpi,mpich,mpt,mpt,ibm,mpi-serial</MPILIBS>                <!-- openmpi, mpich, ibm, mpi-serial -->
-        <RUNDIR>USERDEFINED_required_build</RUNDIR>                       <!-- complete path to the run directory -->
-        <EXEROOT>USERDEFINED_required_build</EXEROOT>                     <!-- complete path to the build directory -->
-        <DIN_LOC_ROOT>USERDEFINED_required_build</DIN_LOC_ROOT>           <!-- complete path to the inputdata directory -->
+        <RUNDIR>/n/kuanglfs/$CCSMUSER/cesm_output/$CASE/run</RUNDIR>      <!-- complete path to the run directory -->
+        <EXEROOT>/n/kuanglfs/$CCSMUSER/cesm_output/$CASE/bld</EXEROOT>    <!-- complete path to the build directory -->
+        <DIN_LOC_ROOT>/n/kuanglfs/pchan/CAM_input</DIN_LOC_ROOT>          <!-- complete path to the inputdata directory -->
         <DIN_LOC_ROOT_CLMFORC>USERDEFINED_optional_build</DIN_LOC_ROOT_CLMFORC>
-        <DOUT_S>FALSE</DOUT_S>                                            <!-- logical for short term archiving -->
-        <DOUT_S_ROOT>USERDEFINED_optional_run</DOUT_S_ROOT>               <!-- complete path to a short term archiving directory -->
+        <DOUT_S>TRUE</DOUT_S>                                             <!-- logical for short term archiving -->
+        <DOUT_S_ROOT>/n/kuanglfs/$CCSMUSER/cesm_output/$CASE</DOUT_S_ROOT> <!-- complete path to a short term archiving directory -->
         <DOUT_L_MSROOT>USERDEFINED_optional_run</DOUT_L_MSROOT>           <!-- complete path to a long term archiving directory -->
         <CCSM_BASELINE>USERDEFINED_optional_run</CCSM_BASELINE>           <!-- where the cesm testing scripts write and read baseline results -->
         <CCSM_CPRNC>USERDEFINED_optional_test</CCSM_CPRNC>                <!-- path to the cprnc tool used to compare netcdf history files in testing -->
-        <BATCHQUERY>USERDEFINED_optional_run</BATCHQUERY> 
-        <BATCHSUBMIT>USERDEFINED_optional_run</BATCHSUBMIT>
+        <BATCHQUERY>squeue</BATCHQUERY> 
+        <BATCHSUBMIT>sbatch</BATCHSUBMIT>
         <SUPPORTED_BY>USERDEFINED_optional</SUPPORTED_BY>                 
-        <GMAKE_J>1</GMAKE_J>
-        <MAX_TASKS_PER_NODE>USERDEFINED_required_build</MAX_TASKS_PER_NODE>
+        <GMAKE_J>4</GMAKE_J>
+        <MAX_TASKS_PER_NODE>64</MAX_TASKS_PER_NODE>
 </machine>
 
 

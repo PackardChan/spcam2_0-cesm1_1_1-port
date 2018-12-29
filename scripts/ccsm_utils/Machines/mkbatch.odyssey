@@ -11,7 +11,7 @@ set maxthrds = `${CASEROOT}/Tools/taskmaker.pl -maxthrds`
 @ nodes = $ntasks / ${MAX_TASKS_PER_NODE}
 if ( $ntasks % ${MAX_TASKS_PER_NODE} > 0) then
   @ nodes = $nodes + 1
-  @ ntasks = $nodes * ${MAX_TASKS_PER_NODE}
+#TODO  @ ntasks = $nodes * ${MAX_TASKS_PER_NODE}
 endif
 @ taskpernode = ${MAX_TASKS_PER_NODE} / ${maxthrds}
 set qname = batch
@@ -28,30 +28,39 @@ endif
 
 cat >! $file << EOF1
 #!/bin/csh -f
-#===============================================================================
-# USERDEFINED
-# This is where the batch submission is set.  The above code computes
-# the total number of tasks, nodes, and other things that can be useful
-# here.  Use PBS, BSUB, or whatever the local environment supports.
-#===============================================================================
-
-##PBS -N ${jobname}
-##PBS -q ${qname}
-##PBS -l nodes=${nodes}:ppn=${taskpernode}
-##PBS -l walltime=${tlimit}
-##PBS -r n
-##PBS -j oe
-##PBS -S /bin/csh -V
-
-##BSUB -l nodes=${nodes}:ppn=${taskpernode}:walltime=${tlimit}
-##BSUB -q ${qname}
-###BSUB -k eo
-###BSUB -J $CASE
-###BSUB -W ${tlimit}
+##SBATCH --account=kuang_lab
+#SBATCH -p huce_amd  #TODO
+#SBATCH -J ${CASE}  #${jobname}
+#SBATCH -N 1-${nodes}
+#SBATCH -n ${ntasks}
+#SBATCH --cpus-per-task=$maxthrds
+##SBATCH --ntasks-per-node=8
+##SBATCH --hint=compute_bound
+##SBATCH --exclusive  #TODO
+#SBATCH --contiguous
+##SBATCH -w holy2a18106   #.rc.fas.harvard.edu
+#SBATCH -x holyseas[03-04]  #holy2b[05101-05108,05201-05208,05301-05308,07101-07108,09202-09208]
+#SBATCH -t 999999  # minutes
+#SBATCH --mem-per-cpu=4025  #4529
+#SBATCH --no-requeue
+#SBATCH -o out
+##SBATCH -e eo  #-%j
+##SBATCH --mail-type=END  #TODO
+##SBATCH --mail-user=name@example.com  # default $USER@holy-slurm01.rc.fas.harvard.edu
 
 #limit coredumpsize 1000000
 #limit stacksize unlimited
 
+ # some problem with loading modules using csh..
+ # see also ~pchan/script/sam/Build.682mod17.csh
+: << EOFc
+#source new-modules.sh >& /dev/null
+unsetenv FASRC_MODULE_FLAVOR
+source /usr/local/bin/new-modules.csh #>& /dev/null
+module purge
+module load intel/15.0.0-fasrc01 impi/5.1.2.150-fasrc01 netcdf/4.1.3-fasrc09
+#module load intel/15.0.0-fasrc01 openmpi/1.10.2-fasrc01 netcdf-fortran/4.4.3-fasrc01
+EOFc
 
 EOF1
 
@@ -77,6 +86,17 @@ setenv OMP_NUM_THREADS ${maxthrds}
 #mpiexec -n ${maxtasks} \$EXEROOT/cesm.exe >&! ccsm.log.\$LID
 #mpirun -np ${maxtasks} \$EXEROOT/cesm.exe >&! ccsm.log.\$LID
 
+# for impi
+srun --mpi=pmi2 --ntasks=${maxtasks} --cpu_bind=sockets --cpu_bind=verbose --kill-on-bad-exit \$EXEROOT/cesm.exe >&! ccsm.log.\$LID
+# for mvapich
+#srun --ntasks=${maxtasks} --cpu_bind=sockets --cpu_bind=verbose --kill-on-bad-exit \$EXEROOT/cesm.exe >&! ccsm.log.\$LID
+# for mvapich2
+#srun --mpi=none --ntasks=${maxtasks} --cpu_bind=sockets --cpu_bind=verbose --kill-on-bad-exit \$EXEROOT/cesm.exe >&! ccsm.log.\$LID
+
+#setenv MV2_ENABLE_AFFINITY 1
+#setenv MV2_CPU_MAPPING 31:29:27:25:23:21:19:17:15:13:11:9:7:5:3:1
+#srun --mpi=none -n=${maxtasks} --kill-on-bad-exit \$EXEROOT/cesm.exe >&! ccsm.log.\$LID
+
 wait
 echo "\`date\` -- CSM EXECUTION HAS FINISHED" 
 
@@ -88,7 +108,6 @@ else if ($PHASE == set_larch) then
 #################################################################################
 
    #This is a place holder for a long-term archiving script
-
 
 #################################################################################
 else

@@ -244,8 +244,8 @@ if $MPILIB is set to mpi-serial then
   <MPI_PATH></MPI_PATH>
 </compiler>
 
-<compiler MACH="userdefined">
-  <NETCDF_PATH> USERDEFINED_MUST_EDIT_THIS</NETCDF_PATH>
+<compiler MACH="odyssey">
+  <NETCDF_PATH> $(NETCDF_HOME)</NETCDF_PATH>
   <PNETCDF_PATH></PNETCDF_PATH>
   <ADD_SLIBS># USERDEFINED $(shell $(NETCDF_PATH)/bin/nc-config --flibs)</ADD_SLIBS>  
   <ADD_CPPDEFS></ADD_CPPDEFS>
@@ -255,11 +255,9 @@ if $MPILIB is set to mpi-serial then
   <MPI_PATH></MPI_PATH>
 </compiler>
 
-<compiler MACH="yellowstone" COMPILER="intel">
+<compiler MACH="odyssey" COMPILER="intel">
   <MPICC>mpiicc</MPICC>
   <MPIFC>mpiifort</MPIFC>
-  <ADD_FFLAGS>  -xHost </ADD_FFLAGS>
-  <ADD_CFLAGS>  -xHost </ADD_CFLAGS>
 </compiler>
 
 <compiler OS="CNL">
