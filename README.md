@@ -14,8 +14,8 @@ Please see how to run the model on [Harvard Wiki](https://wiki.harvard.edu/confl
  * 20180301: **User experience**. DOUT_S now default true.
  * 20180502: **No known bad impact**. GET_REFCASE change from false to compset default.
  * 20180502: **No known bad impact**. Inputdata directory write access opened.
- * 20181229 (planned): **No known impact**. Use official release of SPCAM, discarding unofficial edits by Mark Branson from 2013-08 through 2015-11.
- * (planned): **Bug unwarned**. Radiation rrtmg bug: https://bb.cgd.ucar.edu/4xco2-experiment-crashed-during-running#comment-1014317
+ * 20190101: **No known impact**. Use official release of SPCAM, discarding unofficial edits by Mark Branson from 2013-08 through 2015-11.
+ * 20190101: **Bug unwarned**. Radiation rrtmg bug, affecting CAM5: https://bb.cgd.ucar.edu/4xco2-experiment-crashed-during-running#comment-1014317
 
 ## Porting the model
 Please do not redo porting if you are running the same model (CESM1.1.1 or SPCAM2.0) on Harvard Odyssey - this helps save disk space.
