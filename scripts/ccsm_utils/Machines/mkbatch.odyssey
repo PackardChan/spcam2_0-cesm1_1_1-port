@@ -31,13 +31,14 @@ cat >! $file << EOF1
 ##SBATCH --account=kuang_lab
 #SBATCH -p huce_amd  #TODO
 #SBATCH -J ${CASE}  #${jobname}
-#SBATCH -N 1-${nodes}
+##SBATCH -N 1-${nodes}
+##SBATCH --use-min-nodes
 #SBATCH -n ${ntasks}
 #SBATCH --cpus-per-task=$maxthrds
 ##SBATCH --ntasks-per-node=8
 ##SBATCH --hint=compute_bound
 ##SBATCH --exclusive  #TODO
-#SBATCH --contiguous
+##SBATCH --contiguous
 ##SBATCH -w holy2a18106   #.rc.fas.harvard.edu
 #SBATCH -x holyseas[03-04]  #holy2b[05101-05108,05201-05208,05301-05308,07101-07108,09202-09208]
 #SBATCH -t 999999  # minutes
